@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+body{font-family:system-ui,sans-serif;max-width:860px;margin:0 auto;padding:20px;background:#fff;color:#1a1a1a}
+.card{background:#fff;border:0.5px solid #ddd;border-radius:12px;padding:16px 20px;margin-bottom:10px}
+.badge{display:inline-block;font-size:11px;font-weight:500;padding:2px 8px;border-radius:6px;margin-right:5px;vertical-align:middle}
+.b-red{background:#FCEBEB;color:#A32D2D}
+.b-amber{background:#FAEEDA;color:#854F0B}
+.b-green{background:#EAF3DE;color:#3B6D11}
+.b-gray{background:#F1EFE8;color:#5F5E5A}
+.b-teal{background:#E1F5EE;color:#085041}
+.b-purple{background:#EEEDFE;color:#3C3489}
+.title{font-size:14px;font-weight:500;margin:6px 0 3px}
+.sub{font-size:13px;color:#555;line-height:1.6;margin:0}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.metric{background:#f5f5f0;border-radius:8px;padding:10px 14px}
+.metric-val{font-size:22px;font-weight:500}
+.metric-lbl{font-size:12px;color:#777;margin-top:2px}
+.sh{font-size:11px;font-weight:500;color:#999;text-transform:uppercase;letter-spacing:.07em;margin:18px 0 8px}
+.step-row{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px}
+.snum{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex-shrink:0;margin-top:1px}
+.sn-p{background:#EEEDFE;color:#3C3489}
+.sn-t{background:#E1F5EE;color:#085041}
+.sn-a{background:#FAEEDA;color:#854F0B}
+.sn-r{background:#FCEBEB;color:#A32D2D}
+.divider{border:none;border-top:0.5px solid #eee;margin:14px 0}
+code{font-size:12px;background:#f5f5f0;padding:1px 5px;border-radius:4px;font-family:monospace}
+.gain-pill{font-size:11px;background:#E1F5EE;color:#085041;padding:2px 8px;border-radius:10px;margin-left:6px}
+</style>
+</head>
+<body>
+
+<div class="grid3">
+  <div class="metric"><div class="metric-val" style="color:#A32D2D">1</div><div class="metric-lbl">Critical wrong conclusion</div></div>
+  <div class="metric"><div class="metric-val" style="color:#854F0B">3</div><div class="metric-lbl">Bugs / silent errors</div></div>
+  <div class="metric"><div class="metric-val" style="color:#3B6D11">4</div><div class="metric-lbl">Missing analyses</div></div>
+</div>
+
+<div class="sh">Critical wrong conclusion</div>
+<div class="card" style="border-left:3px solid #E24B4A;border-radius:0 12px 12px 0">
+  <span class="badge b-red">WRONG</span><span class="badge b-gray">Final cell</span>
+  <p class="title">"81+ ads is optimal" — selection bias makes this misleading</p>
+  <p class="sub">Every bin in your incremental profit table shows positive profit. When "more is always better," the model hasn't found a cap — it's found a confound. Users in the 81+ bin are already high-intent. The platform showed them more ads <em>because</em> they were engaging. Causal direction: intent → exposure → conversion, NOT exposure → conversion. Recommending 81+ ads for all users based on this table would waste budget on low-intent users who see no lift from high frequency.</p>
+</div>
+
+<div class="sh">Silent bugs that produce wrong numbers</div>
+
+<div class="card">
+  <span class="badge b-amber">Stale docs</span><span class="badge b-gray">Power Analysis markdown</span>
+  <p class="title">Markdown says 5,07,054 but output shows 12,169,336</p>
+  <p class="sub">You copy-pasted commentary from v7/v8 and never updated it. The actual output changed dramatically because <code>ratio=n_psa/n_ad≈0.042</code> inflates the required ad-group sample. A business owner sees a contradiction between text and numbers and stops trusting the analysis.</p>
+</div>
+
+<div class="card">
+  <span class="badge b-amber">Wrong MDE</span><span class="badge b-gray">Power Analysis — 2nd scenario</span>
+  <p class="title">75% relative MDE is unrealistically optimistic</p>
+  <p class="sub">No campaign is planned around detecting a 75% lift — that means going from 1.79% → 3.12% conversion. Industry standard planning assumption is 10–20% relative lift. Using 75% understates how underpowered you are and makes the analysis look more capable than it is.</p>
+</div>
+
+<div class="card">
+  <span class="badge b-amber">Open bin</span><span class="badge b-gray">Cost Analysis — 81+ midpoint</span>
+  <p class="title">Midpoint of 113 for an open-ended bin is an assumption</p>
+  <p class="sub">The 81+ bin has no upper bound (max = 907 for PSA, 2065 overall). Using 113 understates the true average for this bin. The actual mean is likely 150–200+. This overstates the apparent ROI of the 81+ tier by understating its true cost.</p>
+</div>
+
+<div class="divider"></div>
+<div class="sh">Missing analyses that would complete the notebook</div>
+
+<div class="step-row">
+  <div class="snum sn-r">!</div>
+  <div>
+    <p class="title">Q4 is completely unanswered — temporal analysis of most_ads_day and most_ads_hour</p>
+    <p class="sub">The business owner asked for bidding schedule recommendations. A day × hour heatmap of conversion rates is the most visually compelling output in this dataset. Two groupby calls and one seaborn heatmap — answers the budget pacing question directly. Every version of this notebook has skipped it.</p>
+  </div>
+</div>
+
+<div class="step-row">
+  <div class="snum sn-a">!</div>
+  <div>
+    <p class="title">No multiple testing correction across 4+ hypothesis tests</p>
+    <p class="sub">Running 5 tests at α=0.05 inflates family-wise error to ~23%. Fix: <code>multipletests([p1, p2, ...], method='fdr_bh')</code>. Without this, a rigorous reviewer rejects the analysis. With it, you control false discovery rate at 5%.</p>
+  </div>
+</div>
+
+<div class="step-row">
+  <div class="snum sn-a">!</div>
+  <div>
+    <p class="title">No Bayesian complement to the z-test</p>
+    <p class="sub">A CMO understands "99.99% probability ads outperform PSA" better than p=1.7e-13. Beta-Binomial conjugate prior: 5 lines of scipy. This doesn't replace the z-test — it translates the result into plain English for non-statisticians.</p>
+  </div>
+</div>
+
+<div class="step-row">
+  <div class="snum sn-a">!</div>
+  <div>
+    <p class="title">No executive summary — notebook ends mid-analysis</p>
+    <p class="sub">The CMO reads 10 pages and gets no verdict. One markdown cell at the end with: Decision | Absolute lift | Relative lift | Frequency cap caveat | Best bidding window | Confidence level. That's the deliverable.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+<div class="sh">Upgrade roadmap — what to build next and why</div>
+
+<div class="step-row">
+  <div class="snum sn-r">1</div>
+  <div>
+    <p class="title">Fix cost analysis conclusion with causal caveat <span class="gain-pill">fixes critical error</span></p>
+    <p class="sub"><strong>What:</strong> Add a markdown cell explaining that the 81+ result reflects selection bias. Use the marginal profit curve from model2 as the less-biased estimate alongside the empirical table.<br><strong>Why better:</strong> The empirical table is observational. The log model controls for group assignment and gives a continuous cap rather than a coarse bin.<br><strong>What you gain:</strong> A defensible recommendation. Real cap from model is typically 15–40 ads, not 81+.</p>
+  </div>
+</div>
+
+<div class="step-row">
+  <div class="snum sn-p">2</div>
+  <div>
+    <p class="title">Add marginal profit curve from model2 <span class="gain-pill">closes Q3 properly</span></p>
+    <p class="sub"><strong>What:</strong> Predict P(convert) at each ad count 1…p99 from model2. <code>np.diff(pred_prob)</code> → marginal gain per ad. Multiply by revenue, subtract cost, find zero-crossing.<br><strong>Why better:</strong> Continuous curve gives a specific number ("cap at 32 ads") not a coarse bin. Controls for selection bias.<br><strong>What you gain:</strong> A mathematically derived frequency cap that survives a business review.</p>
+  </div>
+</div>
+
+<div class="step-row">
+  <div class="snum sn-p">3</div>
+  <div>
+    <p class="title">Add Q4 temporal heatmap <span class="gain-pill">answers unanswered question</span></p>
+    <p class="sub"><strong>What:</strong> <code>data.groupby(['most ads day','most ads hour'])['converted'].mean().unstack()</code> → seaborn heatmap.<br><strong>Why better:</strong> You currently answer 4 of 5 business questions. This answers the 5th.<br><strong>What you gain:</strong> A specific bidding schedule recommendation — directly actionable for the $500K budget.</p>
+  </div>
+</div>
+
+<div class="step-row">
+  <div class="snum sn-t">4</div>
+  <div>
+    <p class="title">Add Bayesian A/B testing <span class="gain-pill">stakeholder-friendly</span></p>
+    <p class="sub"><strong>What:</strong> Beta(1+conversions, 1+non-conversions) for each group. Monte Carlo sample both, compute P(ad &gt; psa).<br><strong>Why better:</strong> P-value answers "could this be random?" Bayesian probability answers "how confident are we?" — which is what the CMO wants.<br><strong>What you gain:</strong> One communicable sentence: "99.99% probability ads outperform PSA."</p>
+  </div>
+</div>
+
+<div class="step-row">
+  <div class="snum sn-t">5</div>
+  <div>
+    <p class="title">Add multiple testing correction <span class="gain-pill">makes analysis rigorous</span></p>
+    <p class="sub"><strong>What:</strong> <code>from statsmodels.stats.multitest import multipletests</code>. Collect all p-values, run BH correction, report both original and adjusted.<br><strong>Why better:</strong> 5 tests at α=0.05 = 23% family-wise error. BH correction controls false discovery rate at 5%.<br><strong>What you gain:</strong> The analysis survives peer review. Every senior data scientist will ask this question.</p>
+  </div>
+</div>
+
+<div class="step-row">
+  <div class="snum sn-t">6</div>
+  <div>
+    <p class="title">Write the executive summary cell <span class="gain-pill">completes the deliverable</span></p>
+    <p class="sub"><strong>What:</strong> One final markdown cell: Decision | Lift numbers | Confidence | Frequency cap with caveat | Best bidding windows.<br><strong>Why better:</strong> Right now the CMO reads 10 pages and gets no verdict.<br><strong>What you gain:</strong> A complete deliverable. The business owner reads the last cell and immediately knows what to do with $500K.</p>
+  </div>
+</div>
+
+</body>
+</html>
